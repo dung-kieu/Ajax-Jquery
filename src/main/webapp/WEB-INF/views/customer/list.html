@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let deleteLink = $("a:contains('Delete')");
+            $(deleteLink).click(function (event) {
+                $.ajax({
+                    url:$(event.target).attr("href"),
+                    type:"POST",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Accept", "application/json");
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                    },
+                    success:function (customer) {
+                        var respContent = "";
+                        var rowToDelete = $(event.target).closest("tr");
+                        rowToDelete.remove();
+                        respContent += "<span class='success'>Smartphone was deleted: [";
+                        respContent += customer.name + ":";
+                        respContent += customer.price + "]</span>";
+                        $("#CustomerFromResponse").html(respContent);
+                    }
+                });
+                event.preventDefault();
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="container">
+    <h1>Customer list</h1>
+    <a th:href="@{/customers/create}">Create customer</a>
+    <div>
+        <p>Here you can see a list of Customer:</p>
+        <div id="CustomerFromResponse"></div>
+    </div>
+    <table border="1px" cellpadding="0" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Name Customer</th>
+            <th>price</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="c : ${customers}">
+            <tr>
+                <td th:text="${c.name}"></td>
+                <td th:text="${c.price}"></td>
+                <td>
+                    <a th:href="@{/customers/edit/__${c.id}__}">Edit</a>
+                </td>
+                <td>
+                    <a th:href="@{/customers/delete/__${c.id}__}">delete</a>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

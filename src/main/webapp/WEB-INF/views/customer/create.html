@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#newCustomer').submit(function (event) {
+                var name = $('#name').val();
+                var price = $('#price').val();
+                var json = { "name":name , "price":price};
+                $.ajax({
+                    headers:{
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    type : "POST",
+                    data: JSON.stringify(json),
+                    url: "/customers/createNewCustomer",
+                    success:function (customer) {
+                        var respContent = "";
+                        respContent += "<span class='success'>Smartphone was created: [";
+                        respContent += customer.name + " : ";
+                        respContent += customer.price + " ]</span>"
+                        $("#CustomerFromRepository").html(respContent);
+                    }
+                });
+                event.preventDefault();
+            });
+
+        });
+    </script>
+</head>
+<body>
+<div id="container">
+    <h1>Create customer</h1>
+    <div>
+        <p>here you can create new Customer:</p>
+        <div id="CustomerFromRepository"></div>
+    </div>
+    <form id="newCustomer" th:object="${customers}">
+        <table>
+            <tbody>
+            <tr>
+                <td>Name Customer</td>
+                <td><input type="text" th:field="*{name}"/></td>
+            </tr>
+            <tr>
+                <td>Price customer</td>
+                <td><input type="number" th:field="*{price}"/></td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Create customer" /></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+    <a th:href="@{/customers}">List customer</a>
+</div>
+
+</body>
+</html>
